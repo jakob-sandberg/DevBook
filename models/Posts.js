@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const PostSchema = new Schema({
   user: {
-    type: Schem.Types.ObjectId,
+    type: Schema.Types.ObjectId,
     ref: "users",
   },
   text: {
@@ -49,3 +49,5 @@ const PostSchema = new Schema({
     default: Date.now,
   },
 });
+
+module.exports = mongoose.model("posts", PostSchema);
