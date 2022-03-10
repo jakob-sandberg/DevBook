@@ -7,7 +7,7 @@ const config = require("config");
 
 const Profile = require("../../models/Profile");
 const User = require("../../models/User");
-const { route } = require("express/lib/application");
+const Post = require("../../models/Posts");
 
 // @route    GET api/profile/me
 router.get("/me", auth, async (req, res) => {
@@ -27,22 +27,16 @@ router.get("/me", auth, async (req, res) => {
   }
 });
 
-// @route    POST api/profile/
 router.post(
   "/",
-  [
-    auth,
-    [
-      check("status", "Status is required").not().isEmpty(),
-      check("Skills", "Skills is required").not().isEmpty(),
-    ],
-  ],
+  auth,
+  check("status", "Status is required").notEmpty(),
+  check("skills", "Skills is required").notEmpty(),
   async (req, res) => {
-    const errors = validationResult(req, res);
-    if (!errors.isEmpty) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
-
     const {
       company,
       website,
@@ -133,9 +127,11 @@ router.get("/user/:user_id", async (req, res) => {
   }
 });
 
+//Delete profile
 router.delete("/", auth, async (req, res) => {
   try {
-    console.log(req.user.id);
+    // REmove user post
+    await Post.deleteMany({ user: req.user.id });
     // remove profile
     await Profile.findOneAndRemove({ user: req.user.id });
     // remove user
