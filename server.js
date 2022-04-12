@@ -4,6 +4,10 @@ const path = require("path");
 
 const app = express();
 
+const distDir = __dirname + "/dist/";
+
+app.use(express.static(distDir));
+
 // Connect DB
 connectDB();
 
